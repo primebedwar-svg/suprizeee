@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎀 Birthday Surprise!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ffb6c1 0%, #ffc0cb 50%, #ff69b4 100%);
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+        
+        /* BALLOONS */
+        .balloons {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        .balloon {
+            position: absolute;
+            font-size: 50px;
+            animation: floatUp 12s infinite linear;
+            opacity: 0.8;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(20deg); }
+        }
+        
+        /* SPARKLES */
+        .sparkles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .sparkle {
+            position: absolute;
+            font-size: 25px;
+            animation: sparkle 2s infinite;
+        }
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        
+        /* START SCREEN */
+        .start-screen {
+            text-align: center;
+            cursor: pointer;
+            padding: 40px;
+            user-select: none;
+            z-index: 1;
+        }
+        .click-box {
+            font-size: 100px;
+            display: inline-block;
+            animation: wiggle 1s infinite;
+        }
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+        .click-box.bounce {
+            animation: bigBounce 0.3s ease !important;
+        }
+        @keyframes bigBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+        .click-text {
+            color: white;
+            font-size: 1.8rem;
+            margin-top: 20px;
+            text-shadow: 2px 2px 0px #ff1493;
+        }
+        .click-count {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-top: 10px;
+            text-shadow: 2px 2px 0px #ff1493;
+        }
+        
+        /* BALLOON GAME SCREEN */
+        .game-screen {
+            display: none;
+            text-align: center;
+            z-index: 1;
+        }
+        .game-screen.show {
+            display: block;
+        }
+        .game-title {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0px #ff1493;
+        }
+        .game-instructions {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        .balloon-game {
+            position: relative;
+            width: 350px;
+            height: 350px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            margin: 0 auto;
+            overflow: hidden;
+            border: 4px solid white;
+        }
+        .game-balloon {
+            position: absolute;
+            font-size: 45px;
+            cursor: pointer;
+            transition: transform 0.1s;
+            user-select: none;
+            animation: floatIn 0.5s ease;
+        }
+        @keyframes floatIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        .game-balloon:active {
+            transform: scale(0.85);
+        }
+        .game-score {
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-top: 15px;
+            text-shadow: 2px 2px 0px #ff1493;
+        }
+        
+        /* MAIN SURPRISE */
+        .surprise-container {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(255, 105, 180, 0.5);
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            z-index: 1;
+            animation: explodeIn 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .surprise-container.show {
+            display: block;
+        }
+        @keyframes explodeIn {
+            0% { transform: scale(0) rotate(-360deg); opacity: 0; }
+            50% { transform: scale(1.2) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        
+        .cake {
+            font-size: 80px;
+            animation: floatCake 2s ease-in-out infinite;
+        }
+        @keyframes floatCake {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: #ff1493;
+            margin: 20px 0;
+            text-shadow: 2px 2px 0px #ffd700;
+        }
+        
+        .birthday-msg {
+            font-size: 1.3rem;
+            color: #555;
+            line-height: 2;
+            padding: 25px;
+            background: linear-gradient(135deg, #fff0f5, #ffe4e9);
+            border-radius: 20px;
+            border: 3px solid #ffb6c1;
+        }
+        
+        .love-text {
+            font-size: 1.6rem;
+            color: #ff1493;
+            margin-top: 25px;
+            font-weight: bold;
+        }
+        
+        .decorations {
+            font-size: 50px;
+            margin-top: 20px;
+        }
+        
+        /* MASSIVE CONFETTI */
+        .massive-confetti {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <div class="balloons" id="balloons"></div>
+    <div class="sparkles" id="sparkles"></div>
+    <div class="massive-confetti" id="massiveConfetti"></div>
+    
+    <!-- START SCREEN -->
+    <div class="start-screen" id="startScreen">
+        <div class="click-box" id="clickBox" onclick="handleClick()">🎁</div>
+        <div class="click-text">There's a surprise for you!<br>Click on me 3 times 👆</div>
+        <div class="click-count" id="clickCount">0 / 3</div>
+    </div>
+    
+    <!-- BALLOON GAME -->
+    <div class="game-screen" id="gameScreen">
+        <div class="game-title">🎈 POP 10 BALLOONS! 🎈</div>
+        <div class="game-instructions">Click on the balloons to pop them!</div>
+        <div class="balloon-game" id="balloonGame"></div>
+        <div class="game-score">Popped: <span id="score">0</span> / 10</div>
+    </div>
+    
+    <!-- BIRTHDAY SURPRISE -->
+    <div class="surprise-container" id="surpriseContainer">
+        <div class="cake">🎂</div>
+        <h1>🎉 Happy Birthday Sis! 🎉</h1>
+        
+        <div class="birthday-msg">
+            🎈 Wishing you the most amazing birthday ever! 🎈<br><br>
+            🎁 Hope your day is filled with lots of love, laughter, and cake!<br>
+            🎂 You deserve all the happiness in the world!<br>
+            💖 Thank you for being the best sis ever!<br><br>
+            🎊 Have an awesome day! 🎊
+        </div>
+        
+        <div class="love-text">❤️ Love you tons! ❤️</div>
+        <div class="decorations">🎈🎊💖⭐🎈🎊</div>
+    </div>
+
+    <script>
+        let clickCount = 0;
+        let score = 0;
+        let gameInterval;
+        const clickBox = document.getElementById('clickBox');
+        const balloons = ['🎈', '🎈', '🎀', '🎀', '🩰', '🩰'];
+        
+        // Click 3 times to start
+        function handleClick() {
+            clickCount++;
+            clickBox.classList.remove('bounce');
+            void clickBox.offsetWidth;
+            clickBox.classList.add('bounce');
+            document.getElementById('clickCount').textContent = clickCount + ' / 3';
+            
+            if (clickCount >= 3) {
+                setTimeout(startGame, 300);
+            }
+        }
+        
+        function startGame() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameScreen').classList.add('show');
+            gameInterval = setInterval(spawnBalloon, 800);
+        }
+        
+        function spawnBalloon() {
+            const game = document.getElementById('balloonGame');
+            if (game.children.length >= 8) return;
+            
+            const balloon = document.createElement('div');
+            balloon.className = 'game-balloon';
+            balloon.textContent = balloons[Math.floor(Math.random() * balloons.length)];
+            balloon.style.left = Math.random() * (game.clientWidth - 60) + 'px';
+            balloon.style.top = Math.random() * (game.clientHeight - 60) + 'px';
+            
+            balloon.onclick = function() {
+                score++;
+                document.getElementById('score').textContent = score;
+                createPopEffect(balloon.style.left, balloon.style.top);
+                balloon.remove();
+                
+                if (score >= 10) {
+                    revealSurprise();
+                }
+            };
+            
+            game.appendChild(balloon);
+            
+            setTimeout(() => {
+                if(balloon.parentElement) balloon.remove();
+            }, 2500);
+        }
+        
+        function createPopEffect(x, y) {
+            const pop = document.createElement('div');
+            pop.textContent = '💥';
+            pop.style.cssText = `position:absolute;left:${x};top:${y};font-size:35px;pointer-events:none;animation:popFade 0.5s forwards;`;
+            document.getElementById('balloonGame').appendChild(pop);
+            setTimeout(() => pop.remove(), 500);
+        }
+        
+        function revealSurprise() {
+            clearInterval(gameInterval);
+            
+            // MASSIVE EXPLOSION!
+            createMassiveConfetti();
+            
+            // Hide game, show surprise after explosion
+            setTimeout(() => {
+                document.getElementById('gameScreen').style.display = 'none';
+                document.getElementById('surpriseContainer').classList.add('show');
+            }, 1500);
+        }
+        
+        // MASSIVE CONFETTI EXPLOSION!
+        function createMassiveConfetti() {
+            const container = document.getElementById('massiveConfetti');
+            const emojis = ['🎉', '🎊', '💖', '⭐', '🌟', '🎈', '❤️', '🧡', '💛', '💚', '💙', '💜', '🧣', '👑', '🦄'];
+            
+            for(let i = 0; i < 150; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    const startX = Math.random() * window.innerWidth;
+                    const startY = Math.random() * window.innerHeight / 2;
+                    
+                    confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                    confetti.style.cssText = `
+                        position: fixed;
+                        left: ${startX}px;
+                        top: ${startY}px;
+                        font-size: ${Math.random() * 40 + 20}px;
+                        animation: explode ${Math.random() * 2 + 1}s forwards;
+                        z-index: 1000;
+                    `;
+                    container.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 10);
+            }
+            
+            // Add explosion animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes explode {
+                    0% { transform: scale(0) rotate(0deg); opacity: 1; }
+                    50% { transform: scale(1.5) rotate(360deg); opacity: 1; }
+                    100% { transform: scale(0) rotate(720deg) translateY(200px); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Background balloons
+        for(let i = 0; i < 20; i++) {
+            const balloon = document.createElement('div');
+            balloon.className = 'balloon';
+            balloon.textContent = '🎈';
+            balloon.style.left = Math.random() * 100 + 'vw';
+            balloon.style.animationDelay = Math.random() * 12 + 's';
+            document.getElementById('balloons').appendChild(balloon);
+        }
+        
+        // Sparkles
+        for(let i = 0; i < 15; i++) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.textContent = '✨';
+            sparkle.style.left = Math.random() * 100 + 'vw';
+            sparkle.style.top = Math.random() * 100 + 'vh';
+            sparkle.style.animationDelay = Math.random() * 2 + 's';
+            document.getElementById('sparkles').appendChild(sparkle);
+        }
+    </script>
+</body>
+</html>
